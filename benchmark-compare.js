@@ -14,6 +14,7 @@ commander
   .option("-c --commandlineMdTable", "Print a table for use in MarkDown")
   .parse(process.argv);
 
+const options = commander.opts();
 const resultsPath = join(process.cwd(), "results");
 let choices = readdirSync(resultsPath)
   .filter((file) => file.match(/(.+)\.json$/))
@@ -21,34 +22,33 @@ let choices = readdirSync(resultsPath)
   .map((choice) => choice.replace(".json", ""));
 
 const bold = (writeBold, str) => (writeBold ? chalk.bold(str) : str);
-
 if (!choices.length) {
   console.log(chalk.red("Benchmark to gather some results to compare."));
-} else if (commander.table && !commander.percentage) {
-  const tableSeparatorChars = commander.commandlineMdTable
+} else if (options.table && !options.percentage) {
+  const tableSeparatorChars = options.commandlineMdTable
     ? {
-        top: "",
-        "top-left": "",
-        "top-mid": "",
-        "top-right": "",
-        bottom: "",
-        "bottom-left": "",
-        "bottom-mid": "",
-        "bottom-right": "",
-        mid: "",
-        "left-mid": "",
-        "mid-mid": "",
-        "right-mid": "",
-        left: "|",
-        right: "|",
-        middle: "|",
-      }
+      top: "",
+      "top-left": "",
+      "top-mid": "",
+      "top-right": "",
+      bottom: "",
+      "bottom-left": "",
+      "bottom-mid": "",
+      "bottom-right": "",
+      mid: "",
+      "left-mid": "",
+      "mid-mid": "",
+      "right-mid": "",
+      left: "|",
+      right: "|",
+      middle: "|",
+    }
     : {};
   const table = new Table({
     chars: tableSeparatorChars,
     head: ["Server", "Requests/s", "Latency", "Throughput/Mb"],
   });
-  if (commander.commandlineMdTable) {
+  if (options.commandlineMdTable) {
     table.push([":--", "--:", ":-:", "--:"]);
   }
 
@@ -73,7 +73,7 @@ if (!choices.length) {
       bold(
         beBold,
         chalk.blue(
-          commander.commandlineMdTable
+          options.commandlineMdTable
             ? `[${data.server}](https://github.com/benawad/node-graphql-benchmarks/tree/master/benchmarks/${data.server}.js)`
             : data.server,
         ),
@@ -85,7 +85,7 @@ if (!choices.length) {
   });
 
   console.log(table.toString());
-} else if (commander.percentage) {
+} else if (options.percentage) {
   const data = [];
   choices.forEach((file) => {
     const content = readFileSync(`${resultsPath}/${file}.json`);

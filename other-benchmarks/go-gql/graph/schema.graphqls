@@ -1,0 +1,24 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Author {
+  id: ID!
+  name: String!
+  md5: String! @goField(forceResolver: true)
+  company: String!
+  books: [Book!]!
+}
+
+type Book {
+  id: ID!
+  name: String!
+  numPages: Int!
+}
+
+type Query {
+  authors: [Author!]!
+}
+
+directive @goField(forceResolver: Boolean, name: String) on INPUT_FIELD_DEFINITION
+    | FIELD_DEFINITION
